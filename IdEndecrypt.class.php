@@ -5,14 +5,16 @@
  * 加密过程中有校验防篡改功能,加密完成的字符串中修改任意一位均不能正常解密
  * 在应用过程中可以防止爬虫按递增规律抓取
  * 实现效果类似这种格式的网址 
+ * 
  * encrypt and decrypt numeric ID, for example, encrypt 123456 to 38654321894938303106
  * has the function of checking tamper proofing, any modified of encrypted  the string in the string can not be decrypted
  * in the application process, the crawler can be prevented from crawling by increasing regularity
- * achieve effects similar to URLs in this format * 
+ * achieve effects similar to URLs in this format 
+ * 
  * https://zhidao.baidu.com/question/629747168174413524.html
  * https://zhidao.baidu.com/question/1929987305252691987.html
  * @author jinhongyu <jinhongyu@vip.qq.com>
-
+ * 
  */
 class IdEndecrypt {
 
@@ -91,7 +93,6 @@ class IdEndecrypt {
         $md5_1 = md5($string_no_hash . $key);
         $intori_md5 = preg_replace('#[a-z]#', '', $md5_1);
         $j = substr($intori_md5, 0, 1);
-        //校验不通过,则退出
         if ($j != $hash_number) {
             return false;
         }
@@ -106,14 +107,12 @@ class IdEndecrypt {
      * @return type
      */
     public static function encode($decode_id, $key = 'TEST123', $max_strsize = self::ID_ENCODE_LENGTH) {
-        //这个strlen可以作为截取的位数
         $strlen = $strlen_str = strlen($decode_id);
         if ($strlen < 10) {
             $strlen_str = '0' . $strlen;
         }
         $decode_id_strrev = strrev($decode_id);
         $md5 = md5($decode_id . $key);
-        //去除数字,找到abcdef
         $azori = preg_replace('#[0-9]#', '', $md5);
         $intori = preg_replace('#[a-z]#', '', $md5);
         $array = array(
@@ -124,19 +123,8 @@ class IdEndecrypt {
             'e' => 2,
             'f' => 3,
         );
-        //从这个位置开始截
         $int = $array[substr($azori, 0, 1)];
         $new_id_str = $int;
-        /*
-         * 支持最大 999999999999 数字的加解密.加密为20位长度的数字
-         * 截取位数所在位置
-          6 则 34位为位数
-          5 则 23位为位数
-          4 则 23位为位数
-          3 则 最后2位
-          2 则 倒数2,3位.
-          1 则 倒数2,3位
-         */
         switch ($int) {
             case 6;
                 $new_id_str .= substr($intori, 0, 1) . $strlen_str . 'J' . $decode_id_strrev . 'X';
